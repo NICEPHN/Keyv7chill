@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Key - Chilli v7</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome cho icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #030712;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Hiệu ứng nền 4D / 4K giả lập không gian sâu & ánh sáng Neon */
+        .bg-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #ff007f, #7f00ff, #00f0ff);
+            filter: blur(120px);
+            opacity: 0.35;
+            z-index: -1;
+            animation: moveGlow 10s infinite alternate;
+        }
+
+        @keyframes moveGlow {
+            0% { transform: translate(-100px, -100px) scale(1); }
+            100% { transform: translate(150px, 150px) scale(1.2); }
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 
+                        0 0 30px rgba(255, 0, 127, 0.2),
+                        inset 0 0 15px rgba(255, 255, 255, 0.05);
+            text-align: center;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ff007f, #00f0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* Trạng thái */
+        .step-counter {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00f0ff;
+            margin-bottom: 20px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* Nút bấm 4D nổi khối */
+        .btn {
+            position: relative;
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff007f, #7f00ff);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 0, 127, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 0, 127, 0.6), 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Ô hiển thị Key */
+        .key-box {
+            display: none;
+            margin-top: 20px;
+            background: rgba(2, 6, 23, 0.9);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .key-text {
+            font-family: monospace;
+            font-size: 16px;
+            color: #00f0ff;
+            word-break: break-all;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #00f0ff, #0077ff);
+            box-shadow: 0 8px 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .copy-btn:hover {
+            box-shadow: 0 12px 25px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Footer By: Nice */
+        .footer-credit {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-credit span {
+            color: #ff007f;
+            font-weight: 600;
+        }
+
+        /* Toast thông báo copy */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            background: #10b981;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <h1>Get Key - Chilli v7</h1>
+        <p class="subtitle">Hệ thống xác thực bảo mật 4D/4K</p>
+
+        <!-- Trạng thái số lần -->
+        <div id="stepCounter" class="step-counter">Tiến trình: 0 / 3</div>
+
+        <!-- Khu vực nút bấm chính -->
+        <button id="actionBtn" class="action-btn btn" onclick="startCountdown()">
+            <i class="fa-solid fa-key"></i> Get Key Ngay
+        </button>
+
+        <!-- Khu vực hiển thị Key cuối cùng -->
+        <div id="keyContainer" class="key-box">
+            <div id="keyDisplay" class="key-text"></div>
+            <button class="copy-btn btn" onclick="copyKey()">
+                <i class="fa-solid fa-copy"></i> Sao Chép Key
+            </button>
+        </div>
+
+        <!-- Dòng chữ By: Nice ở dưới -->
+        <div class="footer-credit">By: <span>Nice</span></div>
+    </div>
+
+    <!-- Thông báo khi copy thành công -->
+    <div id="toast" class="toast">Đã sao chép Key thành công!</div>
+
+    <script>
+        let currentStep = 0;
+        const maxSteps = 3;
+        let countdownTimer = null;
+
+        const actionBtn = document.getElementById('actionBtn');
+        const stepCounter = document.getElementById('stepCounter');
+        const keyContainer = document.getElementById('keyContainer');
+        const keyDisplay = document.getElementById('keyDisplay');
+        const toast = document.getElementById('toast');
+
+        function startCountdown() {
+            if (currentStep >= maxSteps) return;
+
+            actionBtn.disabled = true;
+            let timeLeft = 10; // 10 giây mỗi lần
+            
+            actionBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đợi (${timeLeft}s)...`;
+
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    actionBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đợi (${timeLeft}s)...`;
+                } else {
+                    clearInterval(countdownTimer);
+                    currentStep++;
+                    stepCounter.innerText = `Tiến trình: ${currentStep} / ${maxSteps}`;
+
+                    if (currentStep < maxSteps) {
+                        actionBtn.disabled = false;
+                        actionBtn.innerHTML = `<i class="fa-solid fa-arrow-right"></i> Tiếp tục bước ${currentStep + 1}/3`;
+                    } else {
+                        // Hoàn thành 3 lần -> Hiện Key dạng Chiliiv7_xxxx
+                        showFinalKey();
+                    }
+                }
+            }, 1000);
+        }
+
+        function showFinalKey() {
+            actionBtn.style.display = 'none';
+            stepCounter.innerText = "Hoàn thành xác thực!";
+            
+            // Định dạng Key: Chiliiv7_ + số ngẫu nhiên
+            const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase() + Math.floor(Math.random() * 899 + 100);
+            const finalKey = "Chiliiv7_" + randomCode;
+            
+            keyDisplay.innerText = finalKey;
+            keyContainer.style.display = 'block';
+        }
+
+        function copyKey() {
+            const textToCopy = keyDisplay.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
